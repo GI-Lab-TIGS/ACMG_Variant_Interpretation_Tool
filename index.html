@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACMG Variant Interpretation Tool - Genetic Variant Classification</title>
+    <meta name="description" content="Interactive ACMG-based tool for classifying genetic variants as pathogenic, benign, or VUS. Complete guided analysis with evidence scoring and external resource links.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1> ACMG Variant Interpretation Tool</h1>
+            <p>Interactive tool for genetic variant classification based on ACMG guidelines</p>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="step-indicator">
+            <span id="stepIndicator">Step 1 of 11</span>
+        </div>
+
+        <!-- Criteria Summary Panel -->
+        <div class="criteria-summary" id="criteriaSummary">
+            <button class="summary-toggle" id="summaryToggle">Show Criteria Summary</button>
+            <div class="summary-content hidden" id="summaryContent">
+                <h3>Current Criteria</h3>
+                <ul id="criteriaList" class="evidence-list"></ul>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <div id="formContainer">
+            <!-- Step 1: Basic Information -->
+            <div class="card step-card" id="step1" data-step="1">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Basic Information <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Basic Information</div>
+                                <div>Enter the variant details and associated condition for classification analysis. Required fields must be completed before proceeding.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        Variant <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Variant</div>
+                                <div>Enter the genetic variant in standard format (e.g., c.123A>G, p.Met1Leu, chr1:12345A>G). Ensure accuracy for proper classification.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <input type="text" id="variant" class="input" placeholder="e.g., c.123A>G or p.Met1Leu" required>
+                    <span class="validation-message" id="variantValidation"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Disease/Condition <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Disease/Condition</div>
+                                <div>Specify the disease or condition associated with the variant (e.g., Hypertrophic cardiomyopathy).</div>
+                            </div>
+                        </div>
+                    </label>
+                    <input type="text" id="condition" class="input" placeholder="e.g., Hypertrophic cardiomyopathy" required>
+                    <span class="validation-message" id="conditionValidation"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Zygosity
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Zygosity</div>
+                                <div>Indicates whether the variant is present on one or both copies of the chromosome.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="zygosity" value="hetero">
+                            <span>Heterozygous</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="zygosity" value="homo">
+                            <span>Homozygous</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="zygosity" value="hemi">
+                            <span>Hemizygous</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="zygosity" value="skip">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Inheritance Pattern
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Inheritance Pattern</div>
+                                <div>The pattern of inheritance for the associated disease/condition.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="inheritance" value="ad">
+                            <span>Autosomal Dominant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="inheritance" value="ar">
+                            <span>Autosomal Recessive</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="inheritance" value="xd">
+                            <span>X-linked Dominant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="inheritance" value="xr">
+                            <span>X-linked Recessive</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="inheritance" value="skip">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is the gene associated with the mentioned condition with the single etiology?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Gene Association</div>
+                                <div>Check if the gene is known to cause the specified disease.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="gene_assoc" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="gene_assoc" value="no">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="gene_assoc" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Variant Characterization -->
+            <div class="card step-card hidden" id="step2" data-step="2">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Variant Characterization <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Variant Characterization</div>
+                                <div>Determine the variant type and its predicted impact on protein function.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is this a null variant?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Null Variant</div>
+                                <div>Variants causing loss of function: nonsense, frameshift, canonical splice sites (±1/±2), initiation codon loss, single/multi-exon deletions.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <p class="form-description">Nonsense, frameshift, canonical ±1/±2 splice, initiation codon loss, single/multi-exon deletion</p>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="null_variant" value="yes">
+                            <span>Yes, this is a null variant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="null_variant" value="no">
+                            <span>No, this is not a null variant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="null_variant" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is this a missense variant?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Missense Variant</div>
+                                <div>A variant that changes one amino acid to another (e.g., p.Arg123Gln).</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="missense" value="yes">
+                            <span>Yes, this is a missense variant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="missense" value="no">
+                            <span>No, this is not a missense variant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="missense" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="missense-sub" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Is this a novel missense variant?
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">Novel Missense</div>
+                                    <div>A missense variant not previously reported in literature or databases.</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="novel" value="yes">
+                                <span>Yes, this is novel</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="novel" value="no">
+                                <span>No, this has been reported before</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="novel" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Has the same amino-acid change been reported earlier regardless of nucleotide change? (e.g., Val→Leu caused by G>C or G>T).
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">Same Amino Acid Change</div>
+                                    <div>Has the same amino acid change been reported, regardless of nucleotide change </div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="same_aa" value="yes">
+                                <span>Yes, same amino acid change reported</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="same_aa" value="no">
+                                <span>No, amino acid change not reported</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="same_aa" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Is there a different amino-acid substitution at the same residue where a pathogenic variant is already known?
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">Different AA at Same Residue</div>
+                                    <div>A different amino acid substitution at the same residue where a pathogenic variant is known</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="diff_aa" value="yes">
+                                <span>Yes, different pathogenic variant at same position</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="diff_aa" value="no">
+                                <span>No, no known pathogenic variant at this position</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="diff_aa" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Is missense a known mechanism for this disorder?
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">Missense Mechanism</div>
+                                    <div>Is missense mutation an established mechanism of disease for this disorder?</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="mechanism" value="yes">
+                                <span>Yes, missense is established mechanism</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="mechanism" value="no">
+                                <span>No, missense is not established mechanism</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="mechanism" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="alt-basis-sub" class="hidden">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Is there an alternative molecular basis for this disorder?
+                                <div class="info-tooltip">
+                                    <div class="info-icon">i</div>
+                                    <div class="tooltip-content">
+                                        <div class="tooltip-title">Alternative Molecular Basis</div>
+                                        <div>Are there other known genetic mechanisms causing this disorder besides variants in this gene?</div>
+                                    </div>
+                                </div>
+                            </label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="alt_basis" value="yes">
+                                    <span>Yes</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="alt_basis" value="no">
+                                    <span>No</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="alt_basis" value="skip">
+                                    <span>Not Known</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="non-missense-alt" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Is there an alternative molecular basis for this disorder?
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">Alternative Molecular Basis (Non-Missense)</div>
+                                    <div>Are there other known genetic mechanisms causing this disorder besides variants in this gene?</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="alt_basis_non" value="yes">
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="alt_basis_non" value="no">
+                                <span>No</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="alt_basis_non" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Segregation Analysis -->
+            <div class="card step-card hidden" id="step3" data-step="3">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Segregation Analysis <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Segregation Analysis</div>
+                                <div>Analyze how the variant segregates within families and its consistency with inheritance patterns.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="external-links">
+                    <a href="https://www.omim.org/" target="_blank" class="external-link">
+                        🔗 OMIM Database
+                    </a>
+                    <a href="https://gnomad.broadinstitute.org/" target="_blank" class="external-link">
+                        🔗 gnomAD
+                    </a>
+                    <a href="https://bravo.sph.umich.edu/freeze5/hg38/" target="_blank" class="external-link">
+                        🔗 TOPMed
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Have you done segregation analysis?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Segregation Analysis</div>
+                                <div>Family studies to determine if the variant segregates with disease in affected family members.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="segregation_done" value="yes">
+                            <span>Yes, segregation analysis completed</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="segregation_done" value="no">
+                            <span>No, segregation analysis not done</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="segregation_done" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="seg-result" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Observed segregation result
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">Segregation Result</div>
+                                    <div>How does the variant segregates in the family.</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="seg_choice" value="a">
+                                <span>Variant absent in both parents</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="seg_choice" value="b">
+                                <span>Variant present in one or both parents</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="seg_choice" value="c">
+                                <span>Variant present in both parents</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="seg_choice" value="d">
+                                <span>Variant present in only mother</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="seg_choice" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="de-novo" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Is the variant assumed to be de novo?
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">De Novo Variant</div>
+                                    <div>A variant present in the proband but absent in both parents (assuming confirmed maternity and paternity).</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="de_novo" value="yes">
+                                <span>Yes, assumed de novo</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="de_novo" value="no">
+                                <span>No, not de novo</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="de_novo" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Functional Analysis -->
+            <div class="card step-card hidden" id="step4" data-step="4">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Functional Analysis <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Functional Analysis</div>
+                                <div>Evaluate in vitro or in vivo studies on the variant's effect on protein function.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="external-links">
+                    <a href="https://www.omim.org/" target="_blank" class="external-link">
+                        🔗 OMIM Database
+                    </a>
+                    <a href="https://gnomad.broadinstitute.org/" target="_blank" class="external-link">
+                        🔗 gnomAD
+                    </a>
+                    <a href="https://bravo.sph.umich.edu/freeze5/hg38/" target="_blank" class="external-link">
+                        🔗 TOPMed
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Has the variant been studied functionally?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Functional Studies</div>
+                                <div>In vitro or in vivo studies demonstrating the effect of the variant on protein function.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <select id="fun_choice" class="select">
+                        <option value="skip">Not Known</option>
+                        <option value="a">Reported as damaging</option>
+                        <option value="b">Reported as tolerant</option>
+                        <option value="c">Not done</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 5: Population Frequency -->
+            <div class="card step-card hidden" id="step5" data-step="5">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Population Frequency <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Population Frequency</div>
+                                <div>Evaluate the frequency of the variant in healthy population databases.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="external-links">
+                    <a href="https://www.omim.org/" target="_blank" class="external-link">
+                        🔗 OMIM Database
+                    </a>
+                    <a href="https://gnomad.broadinstitute.org/" target="_blank" class="external-link">
+                        🔗 gnomAD
+                    </a>
+                    <a href="https://bravo.sph.umich.edu/freeze5/hg38/" target="_blank" class="external-link">
+                        🔗 TOPMed
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is the frequency of variant <1% of healthy population?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Population Frequency</div>
+                                <div>Check allele frequency in databases like gnomAD.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <select id="pf_choice" class="select">
+                        <option value="skip">Not Known</option>
+                        <option value="a">Yes (&lt;1%)</option>
+                        <option value="b">No</option>
+                        <option value="c">Not observed</option>
+                        <option value="d">Observed in healthy</option>
+                        <option value="e">Greater than expected</option>
+                    </select>
+                </div>
+
+                <div id="af-5" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Is allele frequency ≥5%?
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">High Allele Frequency</div>
+                                    <div>Stand-alone benign if allele frequency is ≥5%.</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="af_5" value="yes">
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="af_5" value="no">
+                                <span>No</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="af_5" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Variant Position -->
+            <div class="card step-card hidden" id="step6" data-step="6">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Variant Position <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Variant Position</div>
+                                <div>Determine if the variant is in a known functional region or mutational hotspot.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is this variant in a mutational hotspot or well-established functional domain?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Hotspot/Domain</div>
+                                <div>Critical region where mutations are known to cause disease.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="hotspot" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="hotspot" value="no">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="hotspot" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7: Cis/Trans -->
+            <div class="card step-card hidden" id="step7" data-step="7">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Cis/Trans <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Cis/Trans</div>
+                                <div>Evaluate the phase relationship with other variants.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is the variant present in trans with an additional pathogenic/likely pathogenic variant?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">In Trans</div>
+                                <div>Is the variant on the opposite chromosome to another pathogenic variant?</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="yn_trans" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="yn_trans" value="no">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="yn_trans" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 8: Variant Effect -->
+            <div class="card step-card hidden" id="step8" data-step="8">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Variant Effect <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Variant Effect</div>
+                                <div>Assess the predicted effect on protein structure or length.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Does this variant lead to deletions/insertions/stop-loss?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Protein Length Changes</div>
+                                <div>In-frame insertions/deletions or stop-loss variants.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="variant_effect" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="variant_effect" value="no">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="variant_effect" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="repetitive" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Is this in a repetitive region?
+                            <div class="info-tooltip">
+                                <div class="info-icon">i</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-title">Repetitive Region</div>
+                                    <div>Low complexity regions prone to sequencing artifacts.</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="repetitive" value="yes">
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="repetitive" value="no">
+                                <span>No</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="repetitive" value="skip">
+                                <span>Not Known</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 9: In Silico Predictions -->
+            <div class="card step-card hidden" id="step9" data-step="9">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        In Silico Predictions <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">In Silico Predictions</div>
+                                <div>Computational predictions of the variant's effect using tools like SIFT, PolyPhen, etc.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="external-links">
+                    <a href="https://varsome.com/" target="_blank" class="external-link">
+                        🔗 VarSome
+                    </a>
+                    <a href="https://franklin.genoox.com/" target="_blank" class="external-link">
+                        🔗 Franklin
+                    </a>
+                    <a href="https://sites.google.com/site/jpopgen/dbNSFP" target="_blank" class="external-link">
+                        🔗 dbNSFP
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        What does the silico tools say about the variant?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">In Silico Tools</div>
+                                <div>Predictions from tools like SIFT, PolyPhen, etc.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <select id="insili_choice" class="select">
+                        <option value="skip">Not Known</option>
+                        <option value="a">&gt;3/5 damaging</option>
+                        <option value="b">&gt;3/5 tolerant</option>
+                        <option value="c">Conflicting</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 10: Reputable Source -->
+            <div class="card step-card hidden" id="step10" data-step="10">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Reputable Source <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Reputable Source</div>
+                                <div>Check classification in reputable databases like ClinVar or HGMD.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="external-links">
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" class="external-link">
+                        🔗 PubMed (Search Gene name and nucleotide change)
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is the variant reported as pathogenic in a reputable source?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Reputable Source</div>
+                                <div>Classification in databases like ClinVar, HGMD.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <select id="rep_choice" class="select">
+                        <option value="skip">Not Known</option>
+                        <option value="a">Pathogenic</option>
+                        <option value="b">Benign</option>
+                        <option value="c">Not available</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 11: Synonymous -->
+            <div class="card step-card hidden" id="step11" data-step="11">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        Synonymous Variant <span class="required">*</span>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Synonymous Variant</div>
+                                <div>Evaluate if the variant is silent and does not affect splicing.</div>
+                            </div>
+                        </div>
+                    </h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Is the variant synonymous with no predicted impact on splicing?
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Synonymous Variant</div>
+                                <div>Silent variant not affecting splicing.</div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="synonymous" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="synonymous" value="no">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="synonymous" value="skip">
+                            <span>Not Known</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section hidden">
+            <div class="card result-card">
+                <div class="result-header">
+                    <button class="close-button" onclick="resetTool()">×</button>
+                    <h2 class="card-title">Final Classification</h2>
+                    <div class="classification-badge" id="classificationBadge" data-class="unknown"></div>
+                    <p id="classificationSubtitle"></p>
+                </div>
+
+                <div id="loadingSpinner" class="loading-spinner hidden">
+                    <div class="spinner"></div>
+                    <p>Calculating Classification...</p>
+                </div>
+
+                <div id="classificationResult" class="result-content hidden">
+                    <div class="evidence-summary">
+                        <div class="pathogenic-evidence">
+                            <h3>Pathogenic Evidence</h3>
+                            <table class="evidence-table">
+                                <tr><td>Very Strong (PVS):</td><td id="pvsCount">0</td></tr>
+                                <tr><td>Strong (PS):</td><td id="psCount">0</td></tr>
+                                <tr><td>Moderate (PM):</td><td id="pmCount">0</td></tr>
+                                <tr><td>Supporting (PP):</td><td id="ppCount">0</td></tr>
+                            </table>
+                            <p><strong>Total Score:</strong> <span id="totalScore">0</span></p>
+                            <div class="strength-bar pathogenic" id="pathStrengthBar">
+                                <div class="bar-fill"></div>
+                                <span class="bar-text">Pathogenic Strength: 0</span>
+                            </div>
+                        </div>
+                        <div class="benign-evidence">
+                            <h3>Benign Evidence</h3>
+                            <table class="evidence-table">
+                                <tr><td>Stand alone (BA):</td><td id="baCount">0</td></tr>
+                                <tr><td>Strong (BS):</td><td id="bsCount">0</td></tr>
+                                <tr><td>Supporting (BP):</td><td id="bpCount">0</td></tr>
+                            </table>
+                            <div class="strength-bar benign" id="benStrengthBar">
+                                <div class="bar-fill"></div>
+                                <span class="bar-text">Benign Strength: 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="criteria-details">
+                        <h3>Applied Criteria</h3>
+                        <ul class="evidence-list" id="criteriaApplied"></ul>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="button button-outline" onclick="resetTool()">New Analysis</button>
+                    <button class="button button-secondary" onclick="window.print()">Export Report</button>
+                </div>
+
+                <section class="resources-references">
+                    <h3>Resources & References</h3>
+                    <p>External databases and tools for further variant analysis</p>
+
+                    <h4>Population Databases</h4>
+                    <div class="external-links">
+                        <a href="https://gnomad.broadinstitute.org/" target="_blank" class="external-link">🔗 gnomAD Aggregation Database</a>
+                        <a href="https://bravo.sph.umich.edu/freeze5/hg38/" target="_blank" class="external-link">🔗 TOPMed for Precision Medicine</a>
+                        <a href="https://exac.broadinstitute.org/" target="_blank" class="external-link">🔗 ExAC Aggregation Consortium</a>
+                    </div>
+
+                    <h4>Disease Databases</h4>
+                    <div class="external-links">
+                        <a href="https://www.omim.org/" target="_blank" class="external-link">🔗 OMIM Online Mendelian Inheritance in Man</a>
+                        <a href="https://www.ncbi.nlm.nih.gov/clinvar/" target="_blank" class="external-link">🔗 ClinVar Clinical Significance of Variants</a>
+                        <a href="https://www.hgmd.cf.ac.uk/ac/index.php" target="_blank" class="external-link">🔗 HGMD Human Gene Mutation Database</a>
+                    </div>
+
+                    <h4>In Silico Prediction Tools</h4>
+                    <div class="external-links">
+                        <a href="https://varsome.com/" target="_blank" class="external-link">🔗 VarSome Comprehensive Variant Analysis</a>
+                        <a href="https://franklin.genoox.com/" target="_blank" class="external-link">🔗 Franklin Genoox Variant Analysis Platform</a>
+                        <a href="https://sites.google.com/site/jpopgen/dbNSFP" target="_blank" class="external-link">🔗 dbNSFP Database for Nonsynonymous SNPs</a>
+                    </div>
+
+                    <div class="literature-search">
+                        <h4>Literature Search</h4>
+                        <input type="text" id="literatureSearch" class="input" placeholder="Search 'autophagy' 'MODY'">
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation" id="navigationSection">
+            <button class="button button-outline" id="prevButton" disabled>Previous</button>
+            <button class="button button-primary" id="nextButton">Next</button>
+            <button class="button button-primary hidden" id="classifyButton">Classify Variant</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
